@@ -16,8 +16,8 @@ func (d Delim) String() string {
 }
 
 type decoder interface {
-	decode([]byte, int64, uintptr) (int64, error)
-	decodeStream(*stream, uintptr) error
+	decode([]byte, int64, unsafe.Pointer) (int64, error)
+	decodeStream(*stream, unsafe.Pointer) error
 }
 
 type Decoder struct {
@@ -73,8 +73,8 @@ func (d *Decoder) Buffered() io.Reader {
 	return d.s.buffered()
 }
 
-func (d *Decoder) validateType(typ *rtype, p uintptr) error {
-	if typ.Kind() != reflect.Ptr || p == 0 {
+func (d *Decoder) validateType(typ *rtype, p unsafe.Pointer) error {
+	if typ.Kind() != reflect.Ptr || uintptr(p) == 0 {
 		return &InvalidUnmarshalError{Type: rtype2type(typ)}
 	}
 	return nil
@@ -86,7 +86,7 @@ func (d *Decoder) decode(src []byte, header *interfaceHeader) error {
 
 	// noescape trick for header.typ ( reflect.*rtype )
 	copiedType := (*rtype)(unsafe.Pointer(typeptr))
-	ptr := uintptr(header.ptr)
+	ptr := noescape(header.ptr)
 
 	if err := d.validateType(copiedType, ptr); err != nil {
 		return err
@@ -147,7 +147,7 @@ func (d *Decoder) prepareForDecode() error {
 func (d *Decoder) Decode(v interface{}) error {
 	header := (*interfaceHeader)(unsafe.Pointer(&v))
 	typ := header.typ
-	ptr := uintptr(header.ptr)
+	ptr := noescape(header.ptr)
 	typeptr := uintptr(unsafe.Pointer(typ))
 	// noescape trick for header.typ ( reflect.*rtype )
 	copiedType := (*rtype)(unsafe.Pointer(typeptr))
