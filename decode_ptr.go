@@ -14,24 +14,24 @@ func newPtrDecoder(dec decoder, typ *rtype) *ptrDecoder {
 }
 
 //go:linkname unsafe_New reflect.unsafe_New
-func unsafe_New(*rtype) uintptr
+func unsafe_New(*rtype) unsafe.Pointer
 
-func (d *ptrDecoder) decodeStream(s *stream, p uintptr) error {
+func (d *ptrDecoder) decodeStream(s *stream, p unsafe.Pointer) error {
 	newptr := unsafe_New(d.typ)
-	if err := d.dec.decodeStream(s, newptr); err != nil {
+	if err := d.dec.decodeStream(s, unsafe.Pointer(newptr)); err != nil {
 		return err
 	}
-	*(*uintptr)(unsafe.Pointer(p)) = newptr
+	*(*uintptr)(p) = uintptr(newptr)
 	return nil
 }
 
-func (d *ptrDecoder) decode(buf []byte, cursor int64, p uintptr) (int64, error) {
+func (d *ptrDecoder) decode(buf []byte, cursor int64, p unsafe.Pointer) (int64, error) {
 	newptr := unsafe_New(d.typ)
-	c, err := d.dec.decode(buf, cursor, newptr)
+	c, err := d.dec.decode(buf, cursor, unsafe.Pointer(newptr))
 	if err != nil {
 		return 0, err
 	}
 	cursor = c
-	*(*uintptr)(unsafe.Pointer(p)) = newptr
+	*(*uintptr)(p) = uintptr(newptr)
 	return cursor, nil
 }

@@ -56,7 +56,7 @@ func copySlice(elemType *rtype, dst, src reflect.SliceHeader) int
 //go:linkname newArray reflect.unsafe_NewArray
 func newArray(*rtype, int) unsafe.Pointer
 
-func (d *sliceDecoder) decodeStream(s *stream, p uintptr) error {
+func (d *sliceDecoder) decodeStream(s *stream, p unsafe.Pointer) error {
 	for {
 		switch s.char() {
 		case ' ', '\n', '\t', '\r':
@@ -71,7 +71,7 @@ func (d *sliceDecoder) decodeStream(s *stream, p uintptr) error {
 			s.cursor++
 			s.skipWhiteSpace()
 			if s.char() == ']' {
-				*(*reflect.SliceHeader)(unsafe.Pointer(p)) = reflect.SliceHeader{
+				*(*reflect.SliceHeader)(p) = reflect.SliceHeader{
 					Data: uintptr(newArray(d.elemType, 0)),
 					Len:  0,
 					Cap:  0,
@@ -91,7 +91,7 @@ func (d *sliceDecoder) decodeStream(s *stream, p uintptr) error {
 					dst := reflect.SliceHeader{Data: uintptr(data), Len: idx, Cap: cap}
 					copySlice(d.elemType, dst, src)
 				}
-				if err := d.valueDecoder.decodeStream(s, uintptr(data)+uintptr(idx)*d.size); err != nil {
+				if err := d.valueDecoder.decodeStream(s, unsafe.Pointer(uintptr(data)+uintptr(idx)*d.size)); err != nil {
 					return err
 				}
 				s.skipWhiteSpace()
@@ -112,7 +112,7 @@ func (d *sliceDecoder) decodeStream(s *stream, p uintptr) error {
 						Len:  slice.len,
 						Cap:  slice.cap,
 					})
-					*(*reflect.SliceHeader)(unsafe.Pointer(p)) = dst
+					*(*reflect.SliceHeader)(p) = dst
 					d.releaseSlice(slice)
 					s.cursor++
 					return nil
@@ -145,7 +145,7 @@ ERROR:
 	return errUnexpectedEndOfJSON("slice", s.totalOffset())
 }
 
-func (d *sliceDecoder) decode(buf []byte, cursor int64, p uintptr) (int64, error) {
+func (d *sliceDecoder) decode(buf []byte, cursor int64, p unsafe.Pointer) (int64, error) {
 	buflen := int64(len(buf))
 	for ; cursor < buflen; cursor++ {
 		switch buf[cursor] {
@@ -171,7 +171,7 @@ func (d *sliceDecoder) decode(buf []byte, cursor int64, p uintptr) (int64, error
 			cursor++
 			cursor = skipWhiteSpace(buf, cursor)
 			if buf[cursor] == ']' {
-				*(*reflect.SliceHeader)(unsafe.Pointer(p)) = reflect.SliceHeader{
+				*(*reflect.SliceHeader)(p) = reflect.SliceHeader{
 					Data: uintptr(newArray(d.elemType, 0)),
 					Len:  0,
 					Cap:  0,
@@ -191,7 +191,7 @@ func (d *sliceDecoder) decode(buf []byte, cursor int64, p uintptr) (int64, error
 					dst := reflect.SliceHeader{Data: uintptr(data), Len: idx, Cap: cap}
 					copySlice(d.elemType, dst, src)
 				}
-				c, err := d.valueDecoder.decode(buf, cursor, uintptr(data)+uintptr(idx)*d.size)
+				c, err := d.valueDecoder.decode(buf, cursor, unsafe.Pointer(uintptr(data)+uintptr(idx)*d.size))
 				if err != nil {
 					return 0, err
 				}
@@ -213,7 +213,7 @@ func (d *sliceDecoder) decode(buf []byte, cursor int64, p uintptr) (int64, error
 						Len:  slice.len,
 						Cap:  slice.cap,
 					})
-					*(*reflect.SliceHeader)(unsafe.Pointer(p)) = dst
+					*(*reflect.SliceHeader)(p) = dst
 					d.releaseSlice(slice)
 					cursor++
 					return cursor, nil

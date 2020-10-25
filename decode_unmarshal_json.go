@@ -12,7 +12,7 @@ func newUnmarshalJSONDecoder(typ *rtype) *unmarshalJSONDecoder {
 	return &unmarshalJSONDecoder{typ: typ}
 }
 
-func (d *unmarshalJSONDecoder) decodeStream(s *stream, p uintptr) error {
+func (d *unmarshalJSONDecoder) decodeStream(s *stream, p unsafe.Pointer) error {
 	s.skipWhiteSpace()
 	start := s.cursor
 	if err := s.skipValue(); err != nil {
@@ -21,7 +21,7 @@ func (d *unmarshalJSONDecoder) decodeStream(s *stream, p uintptr) error {
 	src := s.buf[start:s.cursor]
 	v := *(*interface{})(unsafe.Pointer(&interfaceHeader{
 		typ: d.typ,
-		ptr: unsafe.Pointer(p),
+		ptr: p,
 	}))
 	if err := v.(Unmarshaler).UnmarshalJSON(src); err != nil {
 		return err
@@ -29,7 +29,7 @@ func (d *unmarshalJSONDecoder) decodeStream(s *stream, p uintptr) error {
 	return nil
 }
 
-func (d *unmarshalJSONDecoder) decode(buf []byte, cursor int64, p uintptr) (int64, error) {
+func (d *unmarshalJSONDecoder) decode(buf []byte, cursor int64, p unsafe.Pointer) (int64, error) {
 	cursor = skipWhiteSpace(buf, cursor)
 	start := cursor
 	end, err := skipValue(buf, cursor)
@@ -39,7 +39,7 @@ func (d *unmarshalJSONDecoder) decode(buf []byte, cursor int64, p uintptr) (int6
 	src := buf[start:end]
 	v := *(*interface{})(unsafe.Pointer(&interfaceHeader{
 		typ: d.typ,
-		ptr: unsafe.Pointer(p),
+		ptr: p,
 	}))
 	if err := v.(Unmarshaler).UnmarshalJSON(src); err != nil {
 		return 0, err
