@@ -178,7 +178,7 @@ func (e *Encoder) encode(v interface{}) error {
 			code = codeSet.code
 		}
 		ctx := codeSet.ctx.Get().(*encodeRuntimeContext)
-		p := uintptr(header.ptr)
+		p := header.ptr
 		ctx.init(p)
 		err := e.run(ctx, code)
 		codeSet.ctx.Put(ctx)
@@ -213,14 +213,14 @@ func (e *Encoder) encode(v interface{}) error {
 		ctx: sync.Pool{
 			New: func() interface{} {
 				return &encodeRuntimeContext{
-					ptrs:     make([]uintptr, codeLength),
+					ptrs:     make([]unsafe.Pointer, codeLength),
 					keepRefs: make([]unsafe.Pointer, 8),
 				}
 			},
 		},
 	}
 	cachedOpcode.set(typeptr, codeSet)
-	p := uintptr(header.ptr)
+	p := header.ptr
 	ctx := codeSet.ctx.Get().(*encodeRuntimeContext)
 	ctx.init(p)
 

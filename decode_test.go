@@ -2887,3 +2887,126 @@ func TestUnmarshalMaxDepth(t *testing.T) {
 	}
 }
 */
+// === RUN   TestHeader
+// === RUN   TestHeader/sliceHeader
+// === RUN   TestHeader/stringHeader
+// --- PASS: TestHeader (0.00s)
+//     --- PASS: TestHeader/sliceHeader (0.00s)
+//     --- PASS: TestHeader/stringHeader (0.00s)
+// === RUN   Test_Decoder
+// === RUN   Test_Decoder/int
+// === RUN   Test_Decoder/int8
+// === RUN   Test_Decoder/int16
+// === RUN   Test_Decoder/int32
+// === RUN   Test_Decoder/int64
+// === RUN   Test_Decoder/uint
+// === RUN   Test_Decoder/uint8
+// === RUN   Test_Decoder/uint16
+// === RUN   Test_Decoder/uint32
+// === RUN   Test_Decoder/uint64
+// === RUN   Test_Decoder/bool
+// === RUN   Test_Decoder/bool/true
+// === RUN   Test_Decoder/bool/false
+// === RUN   Test_Decoder/string
+// === RUN   Test_Decoder/float32
+// === RUN   Test_Decoder/float64
+// === RUN   Test_Decoder/slice
+// === RUN   Test_Decoder/array
+// === RUN   Test_Decoder/map
+// === RUN   Test_Decoder/map/nested_map
+// === RUN   Test_Decoder/struct
+// === RUN   Test_Decoder/struct/struct.field_null
+// === RUN   Test_Decoder/interface
+// === RUN   Test_Decoder/interface/number
+// === RUN   Test_Decoder/interface/string
+// === RUN   Test_Decoder/interface/bool
+// === RUN   Test_Decoder/interface/slice
+// === RUN   Test_Decoder/interface/map
+// === RUN   Test_Decoder/interface/null
+// --- PASS: Test_Decoder (0.00s)
+//     --- PASS: Test_Decoder/int (0.00s)
+//     --- PASS: Test_Decoder/int8 (0.00s)
+//     --- PASS: Test_Decoder/int16 (0.00s)
+//     --- PASS: Test_Decoder/int32 (0.00s)
+//     --- PASS: Test_Decoder/int64 (0.00s)
+//     --- PASS: Test_Decoder/uint (0.00s)
+//     --- PASS: Test_Decoder/uint8 (0.00s)
+//     --- PASS: Test_Decoder/uint16 (0.00s)
+//     --- PASS: Test_Decoder/uint32 (0.00s)
+//     --- PASS: Test_Decoder/uint64 (0.00s)
+//     --- PASS: Test_Decoder/bool (0.00s)
+//         --- PASS: Test_Decoder/bool/true (0.00s)
+//         --- PASS: Test_Decoder/bool/false (0.00s)
+//     --- PASS: Test_Decoder/string (0.00s)
+//     --- PASS: Test_Decoder/float32 (0.00s)
+//     --- PASS: Test_Decoder/float64 (0.00s)
+//     --- PASS: Test_Decoder/slice (0.00s)
+//     --- PASS: Test_Decoder/array (0.00s)
+//     --- PASS: Test_Decoder/map (0.00s)
+//         --- PASS: Test_Decoder/map/nested_map (0.00s)
+//     --- PASS: Test_Decoder/struct (0.00s)
+//         --- PASS: Test_Decoder/struct/struct.field_null (0.00s)
+//     --- PASS: Test_Decoder/interface (0.00s)
+//         --- PASS: Test_Decoder/interface/number (0.00s)
+//         --- PASS: Test_Decoder/interface/string (0.00s)
+//         --- PASS: Test_Decoder/interface/bool (0.00s)
+//         --- PASS: Test_Decoder/interface/slice (0.00s)
+//         --- PASS: Test_Decoder/interface/map (0.00s)
+//         --- PASS: Test_Decoder/interface/null (0.00s)
+// === RUN   Test_Decoder_UseNumber
+// --- PASS: Test_Decoder_UseNumber (0.00s)
+// === RUN   Test_Decoder_DisallowUnknownFields
+// --- PASS: Test_Decoder_DisallowUnknownFields (0.00s)
+// === RUN   Test_UnmarshalJSON
+// === RUN   Test_UnmarshalJSON/*struct
+// --- PASS: Test_UnmarshalJSON (0.00s)
+//     --- PASS: Test_UnmarshalJSON/*struct (0.00s)
+// === RUN   Test_UnmarshalText
+// === RUN   Test_UnmarshalText/*struct
+// --- PASS: Test_UnmarshalText (0.00s)
+//     --- PASS: Test_UnmarshalText/*struct (0.00s)
+// === RUN   Test_InvalidUnmarshalError
+// === RUN   Test_InvalidUnmarshalError/nil
+// === RUN   Test_InvalidUnmarshalError/non_pointer
+// --- PASS: Test_InvalidUnmarshalError (0.00s)
+//     --- PASS: Test_InvalidUnmarshalError/nil (0.00s)
+//     --- PASS: Test_InvalidUnmarshalError/non_pointer (0.00s)
+// === RUN   Test_Token
+// --- PASS: Test_Token (0.00s)
+// === RUN   Test_DecodeStream
+// --- PASS: Test_DecodeStream (0.00s)
+// === RUN   TestMarshalAllValue
+// --- FAIL: TestMarshalAllValue (0.00s)
+// panic: runtime error: invalid memory address or nil pointer dereference [recovered]
+// 	panic: runtime error: invalid memory address or nil pointer dereference
+// [signal SIGSEGV: segmentation violation code=0x1 addr=0x1 pc=0x10112aa]
+//
+// goroutine 50 [running]:
+// testing.tRunner.func1.2(0x120d200, 0x13e16c0)
+// 	/usr/local/go/src/testing/testing.go:1123 +0x332
+// testing.tRunner.func1(0xc000201b00)
+// 	/usr/local/go/src/testing/testing.go:1126 +0x4b6
+// panic(0x120d200, 0x13e16c0)
+// 	/usr/local/go/src/runtime/panic.go:965 +0x1b9
+// reflect.mapiterinit(0x120c0e0, 0xc00025bf90, 0x0)
+// 	/usr/local/go/src/runtime/map.go:1340 +0x54
+// github.com/goccy/go-json.newHiter(0x120c0e0, 0xc000113ad0, 0x3)
+// 	/Users/zchee/go/src/github.com/goccy/go-json/encode_map.go:97 +0x99
+// github.com/goccy/go-json.(*Encoder).run(0xc0001593b0, 0xc000237a10, 0xc0002582a0, 0x11f7880, 0xc000127300)
+// 	/Users/zchee/go/src/github.com/goccy/go-json/encode_vm.go:482 +0x3725
+// github.com/goccy/go-json.(*Encoder).encode(0xc0001593b0, 0x1243760, 0xc00014c900, 0xc000188e48, 0x1134e11)
+// 	/Users/zchee/go/src/github.com/goccy/go-json/encode.go:234 +0x675
+// github.com/goccy/go-json.(*Encoder).encodeForMarshal(0xc0001593b0, 0x1243760, 0xc00014c900, 0xc00014c900, 0x13e7fa0, 0x218, 0x10e16a0, 0x13b3e28)
+// 	/Users/zchee/go/src/github.com/goccy/go-json/encode.go:146 +0x45
+// github.com/goccy/go-json.MarshalWithOption(0x1243760, 0xc00014c900, 0x0, 0x0, 0x0, 0xbbf2453ae17c, 0x100000001, 0xc000066f48, 0x106b03b, 0xbbf2453ae17c)
+// 	/Users/zchee/go/src/github.com/goccy/go-json/json.go:169 +0xe5
+// github.com/goccy/go-json.Marshal(...)
+// 	/Users/zchee/go/src/github.com/goccy/go-json/json.go:157
+// github.com/goccy/go-json_test.TestMarshalAllValue(0xc000201b00)
+// 	/Users/zchee/go/src/github.com/goccy/go-json/decode_test.go:1689 +0x74
+// testing.tRunner(0xc000201b00, 0x12594d8)
+// 	/usr/local/go/src/testing/testing.go:1173 +0xef
+// created by testing.(*T).Run
+// 	/usr/local/go/src/testing/testing.go:1218 +0x2b3
+// FAIL	github.com/goccy/go-json	0.028s
+// FAIL

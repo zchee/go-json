@@ -354,7 +354,7 @@ func (e *Encoder) compileArray(ctx *encodeCompileContext) (*opcode, error) {
 
 //go:linkname mapiterinit reflect.mapiterinit
 //go:noescape
-func mapiterinit(mapType *rtype, m unsafe.Pointer) unsafe.Pointer
+func mapiterinit(mapType *rtype, m *hmap) *hiter
 
 //go:linkname mapiterkey reflect.mapiterkey
 //go:noescape
