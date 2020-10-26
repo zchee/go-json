@@ -254,11 +254,6 @@ func (t *rtype) escape() {
 //go:noescape
 func rtype2type(t *rtype) reflect.Type
 
-type interfaceHeader struct {
-	typ *rtype
-	ptr unsafe.Pointer
-}
-
 func type2rtype(t reflect.Type) *rtype {
 	return (*rtype)(((*interfaceHeader)(unsafe.Pointer(&t))).ptr)
 }

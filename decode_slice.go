@@ -13,15 +13,6 @@ type sliceDecoder struct {
 	arrayPool    sync.Pool
 }
 
-// If use reflect.SliceHeader, data type is uintptr.
-// In this case, Go compiler cannot trace reference created by newArray().
-// So, define using unsafe.Pointer as data type
-type sliceHeader struct {
-	data unsafe.Pointer
-	len  int
-	cap  int
-}
-
 func newSliceDecoder(dec decoder, elemType *rtype, size uintptr) *sliceDecoder {
 	return &sliceDecoder{
 		valueDecoder: dec,
