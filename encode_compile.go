@@ -310,7 +310,7 @@ func (e *Encoder) compileSlice(ctx *encodeCompileContext) (*opcode, error) {
 	code.beforeLastCode().next = (*opcode)(unsafe.Pointer(elemCode))
 	elemCode.next = code
 	elemCode.end = end
-	return (*opcode)(unsafe.Pointer(header)), nil
+	return (*opcode)(header), nil
 }
 
 func (e *Encoder) compileArray(ctx *encodeCompileContext) (*opcode, error) {
@@ -606,7 +606,7 @@ func (e *Encoder) recursiveCode(ctx *encodeCompileContext, jmp *compiledCode) *o
 
 func (e *Encoder) compiledCode(ctx *encodeCompileContext) *opcode {
 	typ := ctx.typ
-	typeptr := uintptr(unsafe.Pointer(typ))
+	typeptr := unsafe.Pointer(typ)
 	if ctx.withIndent {
 		if compiledCode, exists := e.structTypeToCompiledIndentCode[typeptr]; exists {
 			return e.recursiveCode(ctx, compiledCode)
@@ -858,7 +858,7 @@ func (e *Encoder) compileStruct(ctx *encodeCompileContext, isPtr bool) (*opcode,
 		return code, nil
 	}
 	typ := ctx.typ
-	typeptr := uintptr(unsafe.Pointer(typ))
+	typeptr := unsafe.Pointer(typ)
 	compiled := &compiledCode{}
 	if ctx.withIndent {
 		e.structTypeToCompiledIndentCode[typeptr] = compiled

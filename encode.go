@@ -21,8 +21,8 @@ type Encoder struct {
 	unorderedMap                   bool
 	prefix                         []byte
 	indentStr                      []byte
-	structTypeToCompiledCode       map[uintptr]*compiledCode
-	structTypeToCompiledIndentCode map[uintptr]*compiledCode
+	structTypeToCompiledCode       map[unsafe.Pointer]*compiledCode
+	structTypeToCompiledIndentCode map[unsafe.Pointer]*compiledCode
 }
 
 type compiledCode struct {
@@ -43,14 +43,14 @@ type opcodeSet struct {
 	ctx        sync.Pool
 }
 
-func (m *opcodeMap) get(k uintptr) *opcodeSet {
+func (m *opcodeMap) get(k unsafe.Pointer) *opcodeSet {
 	if v, ok := m.Load(k); ok {
 		return v.(*opcodeSet)
 	}
 	return nil
 }
 
-func (m *opcodeMap) set(k uintptr, op *opcodeSet) {
+func (m *opcodeMap) set(k unsafe.Pointer, op *opcodeSet) {
 	m.Store(k, op)
 }
 
@@ -67,8 +67,8 @@ func init() {
 		New: func() interface{} {
 			return &Encoder{
 				buf:                            make([]byte, 0, bufSize),
-				structTypeToCompiledCode:       map[uintptr]*compiledCode{},
-				structTypeToCompiledIndentCode: map[uintptr]*compiledCode{},
+				structTypeToCompiledCode:       map[unsafe.Pointer]*compiledCode{},
+				structTypeToCompiledIndentCode: map[unsafe.Pointer]*compiledCode{},
 			}
 		},
 	}
@@ -169,7 +169,7 @@ func (e *Encoder) encode(v interface{}) error {
 	header := (*interfaceHeader)(unsafe.Pointer(&v))
 	typ := header.typ
 
-	typeptr := uintptr(unsafe.Pointer(typ))
+	typeptr := unsafe.Pointer(typ)
 	if codeSet := cachedOpcode.get(typeptr); codeSet != nil {
 		var code *opcode
 		if e.enabledIndent {
@@ -178,7 +178,7 @@ func (e *Encoder) encode(v interface{}) error {
 			code = codeSet.code
 		}
 		ctx := codeSet.ctx.Get().(*encodeRuntimeContext)
-		p := uintptr(header.ptr)
+		p := header.ptr
 		ctx.init(p)
 		err := e.run(ctx, code)
 		codeSet.ctx.Put(ctx)
@@ -213,14 +213,14 @@ func (e *Encoder) encode(v interface{}) error {
 		ctx: sync.Pool{
 			New: func() interface{} {
 				return &encodeRuntimeContext{
-					ptrs:     make([]uintptr, codeLength),
+					ptrs:     make([]unsafe.Pointer, codeLength),
 					keepRefs: make([]unsafe.Pointer, 8),
 				}
 			},
 		},
 	}
 	cachedOpcode.set(typeptr, codeSet)
-	p := uintptr(header.ptr)
+	p := header.ptr
 	ctx := codeSet.ctx.Get().(*encodeRuntimeContext)
 	ctx.init(p)
 

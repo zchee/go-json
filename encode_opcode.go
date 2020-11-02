@@ -47,7 +47,7 @@ func opcodeOffset(idx int) uintptr {
 }
 
 func copyOpcode(code *opcode) *opcode {
-	codeMap := map[uintptr]*opcode{}
+	codeMap := map[unsafe.Pointer]*opcode{}
 	return code.copy(codeMap)
 }
 
@@ -66,11 +66,11 @@ func newEndOp(ctx *encodeCompileContext) *opcode {
 	return newOpCodeWithNext(ctx, opEnd, nil)
 }
 
-func (c *opcode) copy(codeMap map[uintptr]*opcode) *opcode {
+func (c *opcode) copy(codeMap map[unsafe.Pointer]*opcode) *opcode {
 	if c == nil {
 		return nil
 	}
-	addr := uintptr(unsafe.Pointer(c))
+	addr := unsafe.Pointer(c)
 	if code, exists := codeMap[addr]; exists {
 		return code
 	}
@@ -265,6 +265,26 @@ func (c *opcode) dumpValue(code *opcode) string {
 		code.idx/uintptrSize,
 		code.mapIter/uintptrSize,
 	)
+}
+
+func (c *opcode) dumpUniverse() string {
+	codes := []string{}
+	for code := c; code.op != opEnd; {
+		switch code.op.codeType() {
+		case codeSliceHead, codeMapHead, codeArrayElem, codeSliceElem, codeMapKey, codeMapValue, codeMapEnd, codeStructField:
+			// nothing to do
+		default:
+			codes = append(codes, fmt.Sprintf(
+				"[%d]%s%s ([idx:%d])",
+				code.displayIdx,
+				strings.Repeat("-", code.indent),
+				code.op,
+				code.idx/uintptrSize,
+			))
+			code = code.next
+		}
+	}
+	return strings.Join(codes, "\n")
 }
 
 func (c *opcode) dump() string {

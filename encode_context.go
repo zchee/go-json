@@ -1,7 +1,6 @@
 package json
 
 import (
-	"reflect"
 	"unsafe"
 )
 
@@ -85,16 +84,21 @@ func (c *encodeCompileContext) decPtrIndex() {
 }
 
 type encodeRuntimeContext struct {
-	ptrs     []uintptr
+	ptrs     []unsafe.Pointer
 	keepRefs []unsafe.Pointer
 }
 
-func (c *encodeRuntimeContext) init(p uintptr) {
+func (c *encodeRuntimeContext) init(p unsafe.Pointer) {
 	c.ptrs[0] = p
 	c.keepRefs = c.keepRefs[:0]
 }
 
-func (c *encodeRuntimeContext) ptr() uintptr {
-	header := (*reflect.SliceHeader)(unsafe.Pointer(&c.ptrs))
-	return header.Data
+func (c *encodeRuntimeContext) ptr() unsafe.Pointer {
+	header := (*sliceHeader)(unsafe.Pointer(uintptr(unsafe.Pointer(&c)) + unsafe.Offsetof((*c).ptrs)))
+	// return unsafe.Pointer(uintptr(unsafe.Pointer(&header)) + unsafe.Offsetof(header.data))
+	return header.data
+}
+
+func (c *encodeRuntimeContext) ptrHeader() *sliceHeader {
+	return (*sliceHeader)(unsafe.Pointer(uintptr(unsafe.Pointer(&c)) + unsafe.Offsetof((*c).ptrs)))
 }

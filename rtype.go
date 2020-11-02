@@ -264,3 +264,20 @@ func noescape(p unsafe.Pointer) unsafe.Pointer {
 	x := uintptr(p)
 	return unsafe.Pointer(x ^ 0)
 }
+
+func unsafeString(b unsafe.Pointer) (s string) {
+	p := unsafe.Pointer((*reflect.SliceHeader)(unsafe.Pointer(&b)).Data)
+	hdr := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	hdr.Data = uintptr(p)
+	hdr.Len = int(uintptr(b))
+	return s
+}
+
+func unsafeBytes(s unsafe.Pointer) (b []byte) {
+	p := unsafe.Pointer((*reflect.StringHeader)(unsafe.Pointer(&s)).Data)
+	hdr := (*reflect.SliceHeader)(unsafe.Pointer(&b))
+	hdr.Data = uintptr(p)
+	hdr.Cap = int(uintptr(s))
+	hdr.Len = int(uintptr(s))
+	return b
+}
