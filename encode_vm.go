@@ -242,14 +242,14 @@ func (e *Encoder) run(ctx *encodeRuntimeContext, code *opcode) error {
 					typ: code.typ,
 					ptr: p,
 				}))
-				bytes, err := v.(encoding.TextMarshaler).MarshalText()
+				byt, err := v.(encoding.TextMarshaler).MarshalText()
 				if err != nil {
 					return &MarshalerError{
 						Type: rtype2type(code.typ),
 						Err:  err,
 					}
 				}
-				e.encodeString(*(*string)(unsafe.Pointer(&bytes)))
+				e.encodeString(*(*string)(unsafe.Pointer(&byt)))
 			}
 			code = code.next
 		case opSliceHead:
@@ -1578,14 +1578,14 @@ func (e *Encoder) run(ctx *encodeRuntimeContext, code *opcode) error {
 					code = code.end
 					break
 				}
-				bytes, err := rv.Interface().(encoding.TextMarshaler).MarshalText()
+				byt, err := rv.Interface().(encoding.TextMarshaler).MarshalText()
 				if err != nil {
 					return &MarshalerError{
 						Type: rtype2type(code.typ),
 						Err:  err,
 					}
 				}
-				e.encodeString(*(*string)(unsafe.Pointer(&bytes)))
+				e.encodeString(*(*string)(unsafe.Pointer(&byt)))
 				code = code.next
 			}
 		case opStructFieldPtrAnonymousHeadMarshalText:
@@ -1607,14 +1607,14 @@ func (e *Encoder) run(ctx *encodeRuntimeContext, code *opcode) error {
 					code = code.end.next
 					break
 				}
-				bytes, err := rv.Interface().(encoding.TextMarshaler).MarshalText()
+				byt, err := rv.Interface().(encoding.TextMarshaler).MarshalText()
 				if err != nil {
 					return &MarshalerError{
 						Type: rtype2type(code.typ),
 						Err:  err,
 					}
 				}
-				e.encodeString(*(*string)(unsafe.Pointer(&bytes)))
+				e.encodeString(*(*string)(unsafe.Pointer(&byt)))
 				code = code.next
 			}
 		case opStructFieldPtrHeadIndent:
@@ -2717,7 +2717,7 @@ func (e *Encoder) run(ctx *encodeRuntimeContext, code *opcode) error {
 					code = code.nextField
 				} else {
 					v := *(*interface{})(unsafe.Pointer(&interfaceHeader{typ: code.typ, ptr: p}))
-					bytes, err := v.(encoding.TextMarshaler).MarshalText()
+					byt, err := v.(encoding.TextMarshaler).MarshalText()
 					if err != nil {
 						return &MarshalerError{
 							Type: rtype2type(code.typ),
@@ -2725,7 +2725,7 @@ func (e *Encoder) run(ctx *encodeRuntimeContext, code *opcode) error {
 						}
 					}
 					e.encodeKey(code)
-					e.encodeString(*(*string)(unsafe.Pointer(&bytes)))
+					e.encodeString(*(*string)(unsafe.Pointer(&byt)))
 					code = code.next
 				}
 			}
@@ -2746,7 +2746,7 @@ func (e *Encoder) run(ctx *encodeRuntimeContext, code *opcode) error {
 					code = code.nextField
 				} else {
 					v := *(*interface{})(unsafe.Pointer(&interfaceHeader{typ: code.typ, ptr: p}))
-					bytes, err := v.(encoding.TextMarshaler).MarshalText()
+					byt, err := v.(encoding.TextMarshaler).MarshalText()
 					if err != nil {
 						return &MarshalerError{
 							Type: rtype2type(code.typ),
@@ -2754,7 +2754,7 @@ func (e *Encoder) run(ctx *encodeRuntimeContext, code *opcode) error {
 						}
 					}
 					e.encodeKey(code)
-					e.encodeString(*(*string)(unsafe.Pointer(&bytes)))
+					e.encodeString(*(*string)(unsafe.Pointer(&byt)))
 					code = code.next
 				}
 			}
@@ -3817,7 +3817,7 @@ func (e *Encoder) run(ctx *encodeRuntimeContext, code *opcode) error {
 				e.encodeByte('{')
 				p := unsafe.Pointer(ptr + code.offset)
 				v := *(*interface{})(unsafe.Pointer(&interfaceHeader{typ: code.typ, ptr: p}))
-				bytes, err := v.(encoding.TextMarshaler).MarshalText()
+				byt, err := v.(encoding.TextMarshaler).MarshalText()
 				if err != nil {
 					return &MarshalerError{
 						Type: rtype2type(code.typ),
@@ -3825,7 +3825,7 @@ func (e *Encoder) run(ctx *encodeRuntimeContext, code *opcode) error {
 					}
 				}
 				e.encodeKey(code)
-				e.encodeString(*(*string)(unsafe.Pointer(&bytes)))
+				e.encodeString(*(*string)(unsafe.Pointer(&byt)))
 				code = code.next
 			}
 		case opStructFieldPtrAnonymousHeadStringTagMarshalText:
@@ -3841,7 +3841,7 @@ func (e *Encoder) run(ctx *encodeRuntimeContext, code *opcode) error {
 			} else {
 				p := unsafe.Pointer(ptr + code.offset)
 				v := *(*interface{})(unsafe.Pointer(&interfaceHeader{typ: code.typ, ptr: p}))
-				bytes, err := v.(encoding.TextMarshaler).MarshalText()
+				byt, err := v.(encoding.TextMarshaler).MarshalText()
 				if err != nil {
 					return &MarshalerError{
 						Type: rtype2type(code.typ),
@@ -3849,7 +3849,7 @@ func (e *Encoder) run(ctx *encodeRuntimeContext, code *opcode) error {
 					}
 				}
 				e.encodeKey(code)
-				e.encodeString(*(*string)(unsafe.Pointer(&bytes)))
+				e.encodeString(*(*string)(unsafe.Pointer(&byt)))
 				code = code.next
 			}
 		case opStructFieldPtrHeadStringTagIndent:
@@ -4547,14 +4547,14 @@ func (e *Encoder) run(ctx *encodeRuntimeContext, code *opcode) error {
 				typ: code.typ,
 				ptr: unsafe.Pointer(p),
 			}))
-			bytes, err := v.(encoding.TextMarshaler).MarshalText()
+			byt, err := v.(encoding.TextMarshaler).MarshalText()
 			if err != nil {
 				return &MarshalerError{
 					Type: rtype2type(code.typ),
 					Err:  err,
 				}
 			}
-			e.encodeString(*(*string)(unsafe.Pointer(&bytes)))
+			e.encodeString(*(*string)(unsafe.Pointer(&byt)))
 			code = code.next
 		case opStructFieldArray:
 			if e.buf[len(e.buf)-1] != '{' {
@@ -5115,14 +5115,14 @@ func (e *Encoder) run(ctx *encodeRuntimeContext, code *opcode) error {
 					typ: code.typ,
 					ptr: unsafe.Pointer(p),
 				}))
-				bytes, err := v.(encoding.TextMarshaler).MarshalText()
+				byt, err := v.(encoding.TextMarshaler).MarshalText()
 				if err != nil {
 					return &MarshalerError{
 						Type: rtype2type(code.typ),
 						Err:  err,
 					}
 				}
-				e.encodeString(*(*string)(unsafe.Pointer(&bytes)))
+				e.encodeString(*(*string)(unsafe.Pointer(&byt)))
 			}
 			code = code.next
 		case opStructFieldOmitEmptyArray:
@@ -5656,14 +5656,14 @@ func (e *Encoder) run(ctx *encodeRuntimeContext, code *opcode) error {
 				typ: code.typ,
 				ptr: unsafe.Pointer(p),
 			}))
-			bytes, err := v.(encoding.TextMarshaler).MarshalText()
+			byt, err := v.(encoding.TextMarshaler).MarshalText()
 			if err != nil {
 				return &MarshalerError{
 					Type: rtype2type(code.typ),
 					Err:  err,
 				}
 			}
-			e.encodeString(*(*string)(unsafe.Pointer(&bytes)))
+			e.encodeString(*(*string)(unsafe.Pointer(&byt)))
 			code = code.next
 		case opStructFieldStringTagIndent:
 			ptr := load(ctxptr, code.headIdx)
@@ -5881,14 +5881,14 @@ func (e *Encoder) run(ctx *encodeRuntimeContext, code *opcode) error {
 				typ: code.typ,
 				ptr: unsafe.Pointer(p),
 			}))
-			bytes, err := v.(encoding.TextMarshaler).MarshalText()
+			byt, err := v.(encoding.TextMarshaler).MarshalText()
 			if err != nil {
 				return &MarshalerError{
 					Type: rtype2type(code.typ),
 					Err:  err,
 				}
 			}
-			e.encodeString(*(*string)(unsafe.Pointer(&bytes)))
+			e.encodeString(*(*string)(unsafe.Pointer(&byt)))
 			code = code.next
 		case opStructEnd:
 			e.encodeByte('}')
