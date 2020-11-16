@@ -343,7 +343,7 @@ var safeSet = [utf8.RuneSelf]bool{
 	'\u007f': true,
 }
 
-var hex = "0123456789abcdef"
+var hex = [16]byte{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'}
 
 func (e *Encoder) encodeEscapedString(s string) {
 	valLen := len(s)
