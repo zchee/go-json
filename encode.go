@@ -102,6 +102,7 @@ func (e *Encoder) EncodeWithOption(v interface{}, opts ...EncodeOption) error {
 	if err := e.encode(v); err != nil {
 		return err
 	}
+	_ = e.buf[len(e.buf)-2] // bounds check hint to compiler
 	if e.enabledIndent {
 		e.buf = e.buf[:len(e.buf)-2]
 	} else {
