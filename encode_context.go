@@ -84,11 +84,11 @@ func (c *encodeCompileContext) decPtrIndex() {
 }
 
 type encodeRuntimeContext struct {
-	ptrs     []uintptr
+	ptrs     []unsafe.Pointer
 	keepRefs []unsafe.Pointer
 }
 
-func (c *encodeRuntimeContext) init(p uintptr) {
+func (c *encodeRuntimeContext) init(p unsafe.Pointer) {
 	c.ptrs[0] = p
 	c.keepRefs = c.keepRefs[:0]
 }

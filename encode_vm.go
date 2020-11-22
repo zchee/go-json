@@ -267,7 +267,9 @@ func (e *Encoder) run(ctx *encodeRuntimeContext, code *opcode) error {
 
 			newLen := offsetNum + totalLength + nextTotalLength
 			if curlen < newLen {
-				ctx.ptrs = append(ctx.ptrs, make([]uintptr, newLen-curlen)...)
+				for i := 0; 0 < newLen-curlen; i++ {
+					ctx.ptrs = append(ctx.ptrs, noescape(unsafe.Pointer(nil)))
+				}
 			}
 			ctxptr = ctx.ptr() + ptrOffset // assign new ctxptr
 
@@ -344,7 +346,9 @@ func (e *Encoder) run(ctx *encodeRuntimeContext, code *opcode) error {
 
 			newLen := offsetNum + totalLength + nextTotalLength
 			if curlen < newLen {
-				ctx.ptrs = append(ctx.ptrs, make([]uintptr, newLen-curlen)...)
+				for i := 0; 0 < newLen-curlen; i++ {
+					ctx.ptrs = append(ctx.ptrs, noescape(unsafe.Pointer(nil)))
+				}
 			}
 			ctxptr = ctx.ptr() + ptrOffset // assign new ctxptr
 
@@ -1015,7 +1019,9 @@ func (e *Encoder) run(ctx *encodeRuntimeContext, code *opcode) error {
 
 			newLen := offsetNum + totalLength + nextTotalLength
 			if curlen < newLen {
-				ctx.ptrs = append(ctx.ptrs, make([]uintptr, newLen-curlen)...)
+				for i := 0; 0 < newLen-curlen; i++ {
+					ctx.ptrs = append(ctx.ptrs, noescape(unsafe.Pointer(nil)))
+				}
 			}
 			ctxptr = ctx.ptr() + ptrOffset // assign new ctxptr
 
